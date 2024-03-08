@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="9016092a-6431-477c-9089-d4834b3b99c6" name="https://github.com/Muhambs/MycomfortZone1.git" url="https://github.com/Muhambs/Project24.git">
+        <fileTransfer accessType="WEBDAV" port="6180">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>

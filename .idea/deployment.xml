@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="PublishConfigData" uploadOnCheckin="9016092a-6431-477c-9089-d4834b3b99c6" remoteFilesAllowedToDisappearOnAutoupload="false">
+    <serverData>
+      <paths name="https://github.com/Muhambs/MycomfortZone1.git">
+        <serverdata>
+          <mappings>
+            <mapping local="$PROJECT_DIR$" web="/https://github.com/Muhambs/MycomfortZone1.git" />
+          </mappings>
+        </serverdata>
+      </paths>
+    </serverData>
+    <option name="myUploadOnCheckinName" value="https://github.com/Muhambs/MycomfortZone1.git" />
+  </component>
+</project>
