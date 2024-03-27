@@ -1,3 +1,4 @@
+
 body{
 	margin: 0;
 	padding: 0;
@@ -6,12 +7,25 @@ body{
 	align-items: center;
 	min-height: 100vh;
 	font-family: 'Jost', sans-serif;
-	background: linear-gradient(to bottom, #867540, #9aa178, #9aa178);
-} 
+	background: linear-gradient(to bottom, #F0B27A, #768574, #212F3C);
+	h1 {
+    font-family: Algerian, sans-serif;
+    font-size: 70px;
+	}
+	p {
+		font-family: Haettenschweiler, sans-serif;
+    	font-size: 30px;
+		direction: rtl;
+	}
+.container {
+    padding: 20px;
+}
+
+}
 .main{
 	width: 350px;
 	height: 500px;
-	background: red;
+	background:beige;
 	overflow: hidden;
 	background: url("https://doc-08-2c-docs.googleusercontent.com/docs/securesc/68c90smiglihng9534mvqmq1946dmis5/fo0picsp1nhiucmc0l25s29respgpr4j/1631524275000/03522360960922298374/03522360960922298374/1Sx0jhdpEpnNIydS4rnN4kHSJtU1EyWka?e=view&authuser=0&nonce=gcrocepgbb17m&user=03522360960922298374&hash=tfhgbs86ka6divo3llbvp93mg4csvb38") no-repeat center/ cover;
 	border-radius: 10px;
@@ -19,7 +33,7 @@ body{
 }
 #chk{
 	display: none;
-} 
+}
 .signup{
 	position: relative;
 	width:100%;
@@ -65,7 +79,7 @@ button{
 	cursor: pointer;
 }
 button:hover{
-	background: #9aa178;
+	background:#768574;
 }
 .login{
 	height: 460px;
@@ -83,7 +97,7 @@ button:hover{
 	transform: translateY(-500px);
 }
 #chk:checked ~ .login label{
-	transform: scale(1);	
+	transform: scale(1);
 }
 #chk:checked ~ .signup label{
 	transform: scale(.3);
