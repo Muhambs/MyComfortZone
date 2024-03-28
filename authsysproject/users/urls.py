@@ -1,10 +1,8 @@
-from multiprocessing.reduction import register
-
 from django.urls import path
-from . import views
 from django.contrib.auth import views as auth_view
-
-from .views import RegisterView, home, logout_user
+from .views import home, profile, logout_user
+from . import views
+from .views import RegisterView
 
 urlpatterns = [
     path('', views.home, name='home'),
@@ -12,6 +10,6 @@ urlpatterns = [
     path('profile/', views.profile, name='profile'),
     path('login/', auth_view.LoginView.as_view(template_name='users/login.html'), name="login"),
     path('logout/', logout_user, name="logout"),
-    path('home/', home, name="home"),
+    path('contact/', views.contact, name='contact'),  # Assuming you have a view named `contact`
 
 ]
