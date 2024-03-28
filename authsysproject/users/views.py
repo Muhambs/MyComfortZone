@@ -9,6 +9,8 @@ from django.contrib.auth import authenticate, login, logout
 def home(request):
     return render(request, 'users/home.html')
 
+def contact(request):
+    return render(request, 'users/contact.html')
 #Rana Younis
 class RegisterView(CreateView):
     mode = User
@@ -31,7 +33,7 @@ def profile(request):
 #Shhd Jbareen
 def login_user(request):
     if request.method == "GET":
-        return render(request, 'login.html')
+        return render(request, 'contact.html')
     elif request.method == "POST":
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -41,4 +43,4 @@ def login_user(request):
             return redirect('profile')
         else:
             print("wrong username or password")
-            return redirect('login')
+            return redirect('contact')
