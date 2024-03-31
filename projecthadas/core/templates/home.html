@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome to MyComfortZone</title>
+  <style>
+    /* Existing styles remain unchanged */
+
+    /* Add dropdown menu styles */
+    .dropdown {
+      position: relative;
+      display: inline-block;
+    }
+
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: #f9f9f9;
+      min-width: 160px;
+      box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+      padding: 12px 16px;
+      z-index: 1;
+    }
+
+    .dropdown-content a {
+      color: black;
+      padding: 12px 16px;
+      text-decoration: none;
+      display: block;
+    }
+
+    .dropdown:hover .dropdown-content {
+      display: block;
+    }
+
+    .dropdown-content a:hover {
+      background-color: #ddd;
+    }
+
+    /* Navigation styling */
+    .header nav ul li {
+      display: inline-block;
+      margin-right: 20px;
+    }
+
+    /* No changes below this line */
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="container">
+      <h1>Welcome to MyComfortZone</h1>
+      <nav>
+        <ul>
+          <li><a href="{% url 'home' %}" class="active">Home</a></li>
+          <li><a href="#">About</a></li>
+          {% if user.is_authenticated %}
+            <li><a href="{% url 'profile' %}">Profile</a></li>
+            <li><a href="{% url 'logout' %}">Logout</a></li>
+          {% else %}
+            <li class="dropdown">
+              <a href="javascript:void(0)">SignUp</a>
+              <div class="dropdown-content">
+                <a href="{% url 'register_patient' %}">As Patient</a>
+                <a href="{% url 'register_doctor' %}">As Doctor</a>
+              </div>
+            </li>
+            <li class="dropdown">
+              <a href="javascript:void(0)">Login</a>
+              <div class="dropdown-content">
+                <a href="{% url 'patient_login' %}">As Patient</a>
+                <a href="{% url 'doctor_login' %}">As Doctor</a>
+              </div>
+            </li>
+          {% endif %}
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <!-- No changes to the rest of the document -->
+
+</body>
+</html>
