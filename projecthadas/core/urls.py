@@ -18,6 +18,7 @@ urlpatterns = [
     path('getMessages/<str:room>/', views.getMessages, name='getMessages'),
     path('book_appointment/', views.book_appointment, name='book_appointment'),
     path('view_appointments/', views.view_appointments, name='view_appointments'),
+    path('delete_appointment/<int:appointment_id>/', views.delete_appointment, name='delete_appointment'),
     path('update_appointment_status/<int:appointment_id>/<str:status>/', views.update_appointment_status, name='update_appointment_status'),
     path('<str:room>/', views.room, name='room'),
 

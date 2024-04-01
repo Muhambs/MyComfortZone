@@ -4,6 +4,8 @@ from django.http import JsonResponse, Http404
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import Group
 from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
+
 from .models import Appointment
 from .forms import AppointmentForm
 from django.views.generic import CreateView
@@ -194,8 +196,12 @@ def book_appointment(request):
 
 @login_required
 def view_appointments(request):
-    appointments = Appointment.objects.filter(doctor=request.user)
-    return render(request, 'view_appointments.html', {'appointments': appointments})
+    appointments = Appointment.objects.filter(doctor=request.user).order_by('appointment_time')
+    accepted_appointments_ids = appointments.filter(status='accepted').values_list('id', flat=True)
+    return render(request, 'view_appointments.html', {
+        'appointments': appointments,
+        'accepted_appointments_ids': accepted_appointments_ids,
+    })
 
 
 @login_required
@@ -208,4 +214,10 @@ def update_appointment_status(request, appointment_id, status):
         appointment.status = 'accepted'
         appointment.save()
 
+    return redirect('view_appointments')
+
+@require_POST
+def delete_appointment(request, appointment_id):
+    appointment = get_object_or_404(Appointment, id=appointment_id, doctor=request.user)  # Check ownership
+    appointment.delete()
     return redirect('view_appointments')

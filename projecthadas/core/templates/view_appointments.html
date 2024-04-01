@@ -73,17 +73,22 @@
 {% for appointment in appointments %}
 <div class="appointment">
     <p><strong>Patient:</strong> {{ appointment.patient.username }}</p>
-    <p><strong>Appointment Time:</strong> {{ appointment.appointment_time|date:"D, d M Y H:i" }}</p>
+    <p><strong>Appointment Time:</strong> {{ appointment.appointment_time }}</p>
     <p><strong>Note:</strong> {{ appointment.note }}</p>
-    <div class="status">
-        <a href="{% url 'update_appointment_status' appointment.id 'accepted' %}" class="accept">Accept</a>
-        <a href="{% url 'update_appointment_status' appointment.id 'rejected' %}" class="reject">Reject</a>
-    </div>
+    {% if appointment.id in accepted_appointments_ids %}
+        <!-- Display as read-only -->
+        <p>Status: Accepted </p>
+        <form action="{% url 'delete_appointment' appointment.id %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Delete</button>
+        </form>
+    {% else %}
+        <a href="{% url 'update_appointment_status' appointment.id 'accepted' %}" class="btn btn-success">Accept</a>
+        <a href="{% url 'update_appointment_status' appointment.id 'rejected' %}" class="btn btn-warning">Reject</a>
+    {% endif %}
 </div>
 {% empty %}
-    <div class="no-appointments">
-        <p>No pending appointments.</p>
-    </div>
+    <p>No pending appointments.</p>
 {% endfor %}
 
 </body>
