@@ -5,9 +5,6 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import Group
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
-
-from .models import Appointment
-from .forms import AppointmentForm
 from django.views.generic import CreateView
 from django.urls import reverse_lazy
 from .decorates import *
@@ -15,7 +12,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from .forms import *
-from .models import Room,Message
+from .models import *
 def home(request):
     return render(request, 'home.html')
 
@@ -221,3 +218,46 @@ def delete_appointment(request, appointment_id):
     appointment = get_object_or_404(Appointment, id=appointment_id, doctor=request.user)  # Check ownership
     appointment.delete()
     return redirect('view_appointments')
+
+@login_required
+def media(request):
+    if request.method == 'POST':
+        form = MediaForm(request.POST, request.FILES)
+        if form.is_valid():
+            media_item = form.save(commit=False)
+            media_item.doctor = request.user
+            media_item.save()
+            messages.success(request, 'Media uploaded successfully!')
+            return redirect('media')
+        else:
+            messages.error(request, 'Error uploading file. Please check the form.')
+    else:
+        form = MediaForm()
+    media_list = Media.objects.all()
+    return render(request, 'media.html', {'form': form, 'media_list': media_list})
+@login_required
+def upload_media(request):
+    if request.method == 'POST':
+        form = MediaForm(request.POST, request.FILES)
+        if form.is_valid():
+            media = form.save(commit=False)
+            media.doctor = request.user
+            media.save()
+            messages.success(request, 'Media uploaded successfully!')
+            return redirect('media')
+        else:
+            messages.error(request, 'Error uploading file. Please check the form.')
+            return render(request, 'media.html', {'form': form})
+    else:
+        form = MediaForm()
+    return render(request, 'media.html', {'form': form})
+
+@login_required
+@require_POST  # Ensures this view can only be called with POST requests
+def delete_media(request, media_id):
+    media = get_object_or_404(Media, id=media_id)
+    if request.user.profile.is_doctor:  # Check if the user is a doctor
+        media.delete()
+        return redirect('media')
+    else:
+        return redirect('media')

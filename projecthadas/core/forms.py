@@ -1,7 +1,7 @@
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User, Group
 from django import forms
-from .models import UserProfuile, Appointment, doctor
+from .models import UserProfuile, Appointment, doctor, Media
 
 
 class RegisterViewpatient(UserCreationForm):
@@ -42,3 +42,9 @@ class AppointmentForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(AppointmentForm, self).__init__(*args, **kwargs)
         self.fields['doctor'].queryset = User.objects.filter(profile__is_doctor=True)
+
+
+class MediaForm(forms.ModelForm):
+    class Meta:
+        model = Media
+        fields = ['title', 'file', 'link']

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+{% extends 'base.html' %}
+{% block title %}Media Gallery{% endblock %}
+{% block content %}
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Media</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .media-item {
+            border: 1px solid #ddd;
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+        .media-item img, .media-item video {
+            max-width: 100%;
+            height: auto; /* Maintain aspect ratio */
+            max-height: 400px; /* Adjust this value based on your preference */
+        }
+        .upload-form {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #fff;
+        }
+    </style>
+</head>
+<body class="container mt-4">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-info">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
+    {% if user.profile.is_doctor %}
+        <div class="upload-form">
+            <h2>Upload Media</h2>
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-primary">Upload</button>
+            </form>
+        </div>
+    {% endif %}
+
+    <h2 class="mb-4">Available Media</h2>
+    <div class="row">
+        {% for media in media_list %}
+    <div class="col-md-4">
+        <div class="media-item">
+            <h4>{{ media.title }}</h4>
+            {% if media.file %}
+                <img src="{{ media.file.url }}" alt="{{ media.title }}">
+            {% elif media.link %}
+                <a href="{{ media.link }}" class="btn btn-link">Link</a>
+            {% endif %}
+            {% if user.profile.is_doctor %}
+                <form action="{% url 'delete_media' media.id %}" method="post" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+{% empty %}
+    <p>No media available.</p>
+{% endfor %}
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
+{% endblock %}
+
