@@ -1,111 +1,122 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<style>
-body {
-  margin: 0 auto;
-  max-width: 800px;
-  padding: 0 20px;
-}
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Django Chat</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+            background-color: #ECF0F3; /* Updated background for a cleaner look */
+        }
 
-.container {
-  border: 2px solid #dedede;
-  background-color: #f1f1f1;
-  border-radius: 5px;
-  padding: 10px;
-  margin: 10px 0;
-}
+        h2 {
+            color: #102A43;
+            margin: 16px 0 24px 0;
+        }
 
-.darker {
-  border-color: #ccc;
-  background-color: #ddd;
-}
+        .container {
+            background-color: #FFFFFF;
+            padding: 25px 30px;
+            border-radius: 20px;
+            box-shadow: 4px 4px 10px #CADAEF,
+                        -4px -4px 10px #FFFFFF;
+            transition: all 0.3s ease;
+        }
 
-.container::after {
-  content: "";
-  clear: both;
-  display: table;
-}
+        .container:hover {
+            transform: translateY(-10px);
+            box-shadow: 6px 6px 15px #AAB8C5,
+                        -6px -6px 15px #FFFFFF;
+        }
 
-.container img {
-  float: left;
-  max-width: 60px;
-  width: 100%;
-  margin-right: 20px;
-  border-radius: 50%;
-}
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
 
-.container img.right {
-  float: right;
-  margin-left: 20px;
-  margin-right:0;
-}
+        input[type=text] {
+            border: none;
+            outline: none;
+            padding: 10px 15px;
+            border-radius: 15px;
+            background: #EDF2F7;
+            box-shadow: inset 2px 2px 5px #BACDEA,
+                        inset -5px -5px 10px #FFFFFF;
+            color: #102A43;
+            font-size: 14px;
+        }
 
-.time-right {
-  float: right;
-  color: #aaa;
-}
+        input[type=text]:focus {
+            background: #EDF2F7;
+            box-shadow: inset 1px 1px 2px #BACDEA,
+                        inset -1px -1px 2px #FFFFFF;
+        }
 
-.time-left {
-  float: left;
-  color: #999;
-}
-</style>
+        input[type=submit] {
+            border: none;
+            padding: 10px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            background: #4D77FF; /* A vibrant blue */
+            color: #FFFFFF;
+            font-weight: 500;
+            letter-spacing: 1px;
+            transition: background-color 0.3s ease;
+            box-shadow: 2px 2px 5px #AAB8C5,
+                        -2px -2px 5px #FFFFFF;
+        }
+
+        input[type=submit]:hover {
+            background: #3754DB;
+        }
+
+        a {
+            color: #4D77FF;
+            text-decoration: none;
+            margin-top: 20px;
+            font-weight: 500;
+            transition: color 0.2s ease-in-out;
+        }
+
+        a:hover {
+            color: #3754DB;
+        }
+
+        /* Additional styling for responsive adjustments */
+        @media (max-width: 820px) {
+            body {
+                padding: 20px;
+            }
+        }
+    </style>
 </head>
 <body>
 
-<div align="center">
-    <h2>Django Chat</h2>
+<div>
+    <h2>Join Chat</h2>
 </div>
 
-
 <div class="container">
-    <style>
-    input[type=text], select {
-    width: 100%;
-    padding: 12px 20px;
-    margin: 8px 0;
-    display: inline-block;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-    }
-
-    input[type=submit] {
-    width: 100%;
-    background-color: #4CAF50;
-    color: white;
-    padding: 14px 20px;
-    margin: 8px 0;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    }
-
-    input[type=submit]:hover {
-    background-color: #45a049;
-    }
-
-    div {
-    border-radius: 5px;
-    background-color: #f2f2f2;
-    padding: 20px;
-    }
-    </style>
-
     <form id="post-form" method="POST" action="checkview">
         {% csrf_token %}
-        <label>Room Name</label>
-        <input type="text" name="room_name" id="room_name" width="100px" />
-        <label>Username</label>
-        <input type="text" name="username" id="username" width="100px" />
+        <label for="room_name">Room Name:</label>
+        <input type="text" name="room_name" id="room_name" placeholder="Enter room name" required>
+        <label for="username">Username:</label>
+        <input type="text" name="username" id="username" placeholder="Enter your username" required>
         <input type="submit" value="Enter Room">
     </form>
 </div>
 
+<a href="{% url 'home' %}">Back to Home</a>
 
 </body>
-
-
 </html>

@@ -9,7 +9,6 @@ urlpatterns = [
     path('logindoctor/', views.doctorlogin, name='doctor_login'),
     path('logout/', views.logout_user, name='logout'),
     path('profile/', views.profile, name='profile'),
-    # Assuming 'another_profile' is an alternate profile view
     path('profilealternate/', views.another_profile, name='another_profile'),
     path('contact/', views.contact, name='contact'),
     path('chat/', views.chat, name='chat'),
