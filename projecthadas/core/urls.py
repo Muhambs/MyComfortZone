@@ -12,4 +12,10 @@ urlpatterns = [
     # Assuming 'another_profile' is an alternate profile view
     path('profilealternate/', views.another_profile, name='another_profile'),
     path('contact/', views.contact, name='contact'),
+    path('chat/', views.chat, name='chat'),
+    path('<str:room>/', views.room, name='room'),
+    path('chat/checkview', views.checkview, name='checkview'),
+    path('send', views.send, name='send'),
+    path('getMessages/<str:room>/', views.getMessages, name='getMessages'),
+
 ]
