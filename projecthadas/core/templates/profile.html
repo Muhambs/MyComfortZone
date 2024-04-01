@@ -3,12 +3,96 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your Profile</title>
+    <title>User Profile</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f4f7f6;
+            margin-top: 20px;
+        }
+        .profile-navbar ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .profile-navbar ul li {
+            display: inline;
+            margin-right: 10px;
+        }
+        .profile-navbar ul li a {
+            color: #007bff;
+            text-decoration: none;
+            padding: 5px 10px;
+            border: 1px solid transparent;
+            border-radius: 5px;
+        }
+        .profile-navbar ul li a:hover,
+        .profile-navbar ul li a.active {
+            background-color: #007bff;
+            color: #ffffff;
+        }
+        .profile-info {
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .profile-info strong {
+            color: #333;
+        }
+        .profile-info img {
+            margin-top: 15px;
+            border-radius: 8px;
+        }
+        .btn-primary {
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Welcome to Your Profile</h1>
-    <!-- Profile details here -->
-    <a href="{% url 'logout' %}">Logout</a>
-    <a href="{% url 'home' %}">Back to Home</a>
+<div class="container mt-5">
+    <div class="profile-navbar mb-4">
+        <nav>
+            <ul>
+                <li><a href="{% url 'home' %}" class="active">Home</a></li>
+                <li><a href="#">About</a></li>
+                {% if user.is_authenticated %}
+                    <li><a href="{% url 'profile' %}">Profile</a></li>
+                    <li><a href="{% url 'logout' %}">Logout</a></li>
+                {% else %}
+                    <li><a href="{% url 'register_patient' %}">SignUp As Patient</a></li>
+                    <li><a href="{% url 'register_doctor' %}">SignUp As Doctor</a></li>
+                    <li><a href="{% url 'patient_login' %}">Login As Patient</a></li>
+                    <li><a href="{% url 'doctor_login' %}">Login As Doctor</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+
+    <div class="profile-info">
+        <h2>{{ user.username }} Profile</h2>
+        <div class="profile-usertitle-name">
+        {% if profile %}
+<div class="profile-info">
+    <p><strong>Username:</strong> {{ profile.user.username }}</p>
+    <p><strong>Email:</strong> {{ profile.user.email }}</p>
+    <p><strong>Bio:</strong> {{ profile.bio }}</p>
+    <p><strong>Location:</strong> {{ profile.location }}</p>
+    <p><strong>Date of Birth:</strong> {{ profile.dob }}</p>
+    <p><strong>Education:</strong> {{ profile.education }}</p>
+    {% if profile.profile_image %}
+        <p><img src="{{ profile.profile_image.url }}" alt="Profile Image" width="300" height="300"></p>
+    {% endif %}
+</div>
+{% else %}
+<p>No profile information available.</p>
+{% endif %}
+
+<a href="{% url 'editprofile' %}">Edit Profile</a>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 </body>
 </html>

@@ -1,5 +1,7 @@
 from pathlib import Path
 
+from django.conf import settings
+from django.conf.urls.static import static
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = 'django-insecure-f6!%4ck*8f5%$e*ir8k&_pb!1%utr0k+ob_t!h)1867y(j)h1p'
@@ -16,6 +18,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'core',
+    'crispy_forms',
 ]
 
 MIDDLEWARE = [
@@ -70,6 +73,11 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+
+urlpatterns = [
+    # ... your URLconf goes here ...
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
@@ -82,7 +90,6 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'static'
-
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 

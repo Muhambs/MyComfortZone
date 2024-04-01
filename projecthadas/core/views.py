@@ -1,6 +1,9 @@
-from django.http import JsonResponse
+from django.contrib.auth.forms import AuthenticationForm
+from django.db import transaction
+from django.http import JsonResponse, Http404
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import Group
+from django.views.decorators.csrf import csrf_exempt
 from django.contrib import messages
 from django.template.context_processors import request
 from django.views.generic import CreateView
@@ -15,82 +18,117 @@ def home(request):
     return render(request, 'home.html')
 
 class registerpatient(CreateView):
-    template_name = 'PatientRegisterView.html'  # Assuming the same template is used for both patient and doctor registration
-    form_class = RegisterViewpatient  # Assuming you have defined a PatientRegisterForm
-    success_url = reverse_lazy('profile')
+    template_name = 'PatientRegisterView.html'
+    form_class = RegisterViewpatient
+    success_url = reverse_lazy('patientlogin')
 
+    def get_success_url(self):
+        messages.success(self.request, "User has been created, please login with your username and password")
+        return super().get_success_url()
     def form_valid(self, form):
-        # Save the user
-        user = form.save()
-
-        # Assign the user to the 'Patient' group
-        group = Group.objects.get(name='Patient')  # Assuming you have a group named 'Patient'
-        user.groups.add(group)
-
-        messages.success(self.request, 'Patient account has been created successfully')
+        with transaction.atomic():
+            user = form.save()
+            Profile.objects.create(user=user, is_patient=True)
+            group, _ = Group.objects.get_or_create(name='patient')
+            user.groups.add(group)
+            messages.success(self.request, "User has been created, please login with your username and password")
         return super().form_valid(form)
 
 class registerdoctor(CreateView):
-    template_name = 'DoctorRegisterView.html'  # Assuming the same template is used for both patient and doctor registration
-    form_class = RegisterViewdoctor  # Assuming you have defined a DoctorRegisterForm
-    success_url = reverse_lazy('profile')
+    template_name = 'DoctorRegisterView.html'
+    form_class = RegisterViewdoctor
+    success_url = reverse_lazy('doctorlogin.html')
 
     def form_valid(self, form):
-        # Save the user
-        user = form.save()
-
-        # Assign the user to the 'Doctor' group
-        group = Group.objects.get(name='Doctor')  # Assuming you have a group named 'Doctor'
-        user.groups.add(group)
-
-        messages.success(self.request, 'Doctor account has been created successfully')
-        return super().form_valid(form)
+        with transaction.atomic():
+            user = form.save()
+            Profile.objects.create(user=user, is_doctor=True)
+            group, _ = Group.objects.get_or_create(name='doctor')
+            user.groups.add(group)
+            messages.success(self.request, 'Doctor account has been created successfully')
+        return redirect('home')
 
 
-def logout_user(request):
+def logoutview(request):
     logout(request)
-    return redirect('home.html')
-
-
+    return redirect('home')
+@csrf_exempt
 @login_required
-@doctor_required
 def profile(request):
-    return render(request, 'profile.html')
+    profile, created = UserProfuile.objects.get_or_create(user=request.user)
+    if request.method == 'POST':
+        form = ProfileForm(request.POST, request.FILES, instance=profile)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Profile updated successfully')
+            return redirect('profile')
+    else:
+        form = ProfileForm(instance=profile)
+    return render(request, 'profile.html', {'form': form, 'profile': profile})
 @login_required
-@patient_required
-def another_profile(request):
-    return render(request, 'another_profile.html')
+def editprofile(request):
+    profile = request.user.userprofuile
+    if request.method == 'POST':
+        form = ProfileForm(request.POST, request.FILES, instance=profile)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Profile updated successfully!')
+            return redirect('profile')
+    else:
+        form = ProfileForm(instance=profile)
+    return render(request, 'editprofile.html', {'form': form})
 
 def patientlogin(request):
     if request.method == "POST":
-        form = loginpatient(request.POST)
+        form = AuthenticationForm(request, data=request.POST)
         if form.is_valid():
-            username = form.cleaned_data.get('username')
-            password = form.cleaned_data.get('password')
+            username = request.POST['username']
+            password = request.POST['password']
             user = authenticate(username=username, password=password)
             if user is not None:
-                login(request, user)
-                return redirect('profile')  # Redirect to patient profile upon successful login
+                try:
+                    profile = Profile.objects.get(user=user)
+                except Profile.DoesNotExist:
+                    messages.error(request, "This account does not have a profile.")
+                    return render(request, 'patientlogin.html', {'form': form})
+                if profile.is_patient:
+                    login(request, user)
+                    return redirect('profile')
+                else:
+                    messages.error(request, "Access denied: User is not a patient.")
             else:
-                print("Wrong username or password")  # Log the error (or handle it in a better way)
+                messages.error(request, "Invalid username or password.")
     else:
-        form = loginpatient()
+        form = AuthenticationForm()
     return render(request, 'patientlogin.html', {'form': form})
 
 def doctorlogin(request):
     if request.method == "POST":
-        form = logindoctor(request.POST)
+        form = AuthenticationForm(request, data=request.POST)
         if form.is_valid():
-            username = form.cleaned_data.get('username')
-            password = form.cleaned_data.get('password')
-            user = authenticate(username=username, password=password)
+            username = request.POST.get('username')
+            password = request.POST.get('password')
+            user = authenticate(request, username=username, password=password)
             if user is not None:
-                login(request, user)
-                return redirect('profile')  # Redirect to doctor profile upon successful login
+                # Ensure the user has a profile
+                try:
+                    profile = Profile.objects.get(user=user)
+                except Profile.DoesNotExist:
+                    messages.error(request, "This account does not have a profile.")
+                    return render(request, 'doctorlogin.html', {'form': form})
+
+                # Check if the user is a doctor
+                if profile.is_doctor:
+                    login(request, user)
+                    return redirect('profile')
+                else:
+                    messages.error(request, "Access denied: User is not a doctor.")
             else:
-                print("Wrong username or password")  # Log the error (or handle it in a better way)
+                messages.error(request, "Invalid username or password.")
+        else:
+            messages.error(request, "Error validating the form")
     else:
-        form = logindoctor()
+        form = AuthenticationForm()
     return render(request, 'doctorlogin.html', {'form': form})
 
 

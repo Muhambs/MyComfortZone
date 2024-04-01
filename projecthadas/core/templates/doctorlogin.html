@@ -96,8 +96,8 @@
         </ul>
     </nav>
     <form method="post">
-        <h1>Doctor Login</h1>
         {% csrf_token %}
+        <h1>Doctor Login</h1>
         {{ form.as_p }}
         <!-- Show Password Toggle -->
         <div>
@@ -110,7 +110,7 @@
     <script>
         function togglePasswordVisibility() {
             // You might need to adjust the selector depending on how your form renders the password field's ID
-            var passwordInput = document.querySelector('input[name="password1"]');
+            var passwordInput = document.querySelector('input[name="password"]');
             if (passwordInput.type === "password") {
                 passwordInput.type = "text";
             } else {

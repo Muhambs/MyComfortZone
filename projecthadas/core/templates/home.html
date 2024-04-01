@@ -92,6 +92,7 @@
           <li><a href="#">About</a></li>
           {% if user.is_authenticated %}
             <li><a href="{% url 'profile' %}">Profile</a></li>
+            <li><a href="{% url 'chat' %}">Chat</a></li>
             <li><a href="{% url 'logout' %}">Logout</a></li>
           {% else %}
             <li class="dropdown">
@@ -113,9 +114,5 @@
       </nav>
     </div>
   </header>
-
-  <!-- Hero Section -->
-  <!-- No changes to the rest of the document -->
-
 </body>
 </html>

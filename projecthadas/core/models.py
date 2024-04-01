@@ -1,12 +1,9 @@
+from django.contrib.auth.models import User
 from django.db import models
+from datetime import datetime
+from django.utils.timezone import now
 
-# Create your models here.
-from django.db import models
 
-# Create your models here.
-from  datetime import datetime
-
-# Create your models here.
 class Room(models.Model):
     name = models.CharField(max_length=1000)
 class Message(models.Model):
@@ -16,9 +13,30 @@ class Message(models.Model):
     room = models.CharField(max_length=1000000)
 
 class patient(models.Model):
+    user=models.OneToOneField(User,null=True,on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     marks = models.CharField(max_length=100)
 
 class doctor(models.Model):
+    user=models.OneToOneField(User,null=True,on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     file = models.FileField(max_length=100)
+
+
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    is_patient = models.BooleanField(default=False)
+    is_doctor = models.BooleanField(default=False)
+
+
+class UserProfuile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    bio = models.TextField(blank=True, null=True)
+    location = models.CharField(max_length=100, blank=True, null=True)
+    dob = models.DateField(null=True, blank=True, default=now)
+    profile_image = models.ImageField(upload_to='profiles/', blank=True, null=True)
+    education = models.TextField(blank=True, null=True)
+
+def __str__(self):
+    return f"{self.user.username}'s profile"

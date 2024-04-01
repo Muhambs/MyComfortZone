@@ -3,126 +3,10 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-body {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start; /* Adjust as needed */
-  min-height: 100vh;
-  margin: 0;
-  padding: 20px;
-  background-color: #e9eff1;
-}
-
-.container {
-  border: 2px solid #dedede;
-  background-color: #f1f1f1;
-  border-radius: 5px;
-  padding: 10px;
-  margin: 10px 0;
-}
-
-.darker {
-  border-color: #ccc;
-  background-color: #ddd;
-}
-
-.container::after {
-  content: "";
-  clear: both;
-  display: table;
-}
-
-.container img {
-  float: left;
-  max-width: 60px;
-  width: 100%;
-  margin-right: 20px;
-  border-radius: 50%;
-}
-
-.container img.right {
-  float: right;
-  margin-left: 20px;
-  margin-right:0;
-}
-
-.time-right {
-  float: right;
-  color: #aaa;
-}
-
-.time-left {
-  float: left;
-  color: #999;
-}
-</style>
-<script   src="https://code.jquery.com/jquery-3.1.1.min.js"   integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="   crossorigin="anonymous"></script>
-</head>
-<body>
-
-<h2>{{room}} - DjChat</h2>
-      <nav>
-        <ul>
-          <li><a href="{% url 'home' %}" class="active">Home</a></li>
-          <li><a href="#">About</a></li>
-          {% if user.is_authenticated %}
-            <li><a href="{% url 'profile' %}">Profile</a></li>
-            <li><a href="{% url 'logout' %}">Logout</a></li>
-          {% else %}
-            <li class="dropdown">
-              <a href="javascript:void(0)">SignUp</a>
-              <div class="dropdown-content">
-                <a href="{% url 'register_patient' %}">As Patient</a>
-                <a href="{% url 'register_doctor' %}">As Doctor</a>
-              </div>
-            </li>
-            <li class="dropdown">
-              <a href="javascript:void(0)">Login</a>
-              <div class="dropdown-content">
-                <a href="{% url 'patient_login' %}">As Patient</a>
-                <a href="{% url 'doctor_login' %}">As Doctor</a>
-              </div>
-            </li>
-          {% endif %}
-        </ul>
-      </nav>
-<div id="display">
-
-
-
-</div>
-
-<script>
-$(document).ready(function(){
-
-setInterval(function(){
-    $.ajax({
-        type: 'GET',
-        url : "/getMessages/{{room}}/",
-        success: function(response){
-            console.log(response);
-            $("#display").empty();
-            for (var key in response.messages)
-            {
-                var temp="<div class='container darker'><b>"+response.messages[key].user+"</b><p>"+response.messages[key].value+"</p><span class='time-left'>"+response.messages[key].date+"</span></div>";
-                $("#display").append(temp);
-            }
-        },
-        error: function(response){
-            alert('An error occured')
-        }
-    });
-},1000);
-})
-</script>
-
-
-<div class="container">
-<style>
+/* Global styles */
 body {
   font-family: 'Arial', sans-serif;
-  background-color: #e9eff1;
+  background-color: #f9f9f9;
   color: #333;
   margin: 0;
   padding: 0 10px;
@@ -164,6 +48,7 @@ nav ul li a:hover, nav ul li a.active {
   background-color: #555;
 }
 
+/* Chat container */
 .container, .darker {
   border-radius: 8px;
   padding: 16px;
@@ -224,39 +109,119 @@ input[type=submit] {
 input[type=submit]:hover {
   background-color: #4cae4c;
 }
+
+/* Message styling */
+.message {
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.own-message {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.other-message {
+    background-color: #008CBA;
+    color: white;
+}
+
+.message-sender {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
 </style>
+</head>
+<body>
 
+<h2>{{ room }} - Feel free to talk</h2>
 
+<nav>
+  <ul>
+    <li><a href="{% url 'home' %}" class="active">Home</a></li>
+    <li><a href="#">About</a></li>
+    {% if user.is_authenticated %}
+      <li><a href="{% url 'profile' %}">Profile</a></li>
+      <li><a href="{% url 'logout' %}">Logout</a></li>
+    {% else %}
+      <li class="dropdown">
+        <a href="javascript:void(0)">SignUp</a>
+        <div class="dropdown-content">
+          <a href="{% url 'register_patient' %}">As Patient</a>
+          <a href="{% url 'register_doctor' %}">As Doctor</a>
+        </div>
+      </li>
+      <li class="dropdown">
+        <a href="javascript:void(0)">Login</a>
+        <div class="dropdown-content">
+          <a href="{% url 'patient_login' %}">As Patient</a>
+          <a href="{% url 'doctor_login' %}">As Doctor</a>
+        </div>
+      </li>
+    {% endif %}
+  </ul>
+</nav>
+
+<div id="display"></div>
+
+<div class="container">
     <form id="post-form">
         {% csrf_token %}
-        <input type="hidden" name="username" id="username" value="{{username}}"/>
-        <input type="hidden" name="room_id" id="room_id" value="{{room_details.id}}"/>
+        <input type="hidden" name="username" id="username" value="{{ username }}" />
+        <input type="hidden" name="room_id" id="room_id" value="{{ room_details.id }}" />
         <input type="text" name="message" id="message" width="100px" />
         <input type="submit" value="Send">
     </form>
 </div>
 
 <a href="{% url 'home' %}">Back to Home</a>
-</body>
 
-<script type="text/javascript">
-  $(document).on('submit','#post-form',function(e){
-    e.preventDefault();
-
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<script>
+$(document).ready(function(){
+  setInterval(function(){
     $.ajax({
-      type:'POST',
-      url:'/send',
-      data:{
-          username:$('#username').val(),
-          room_id:$('#room_id').val(),
-          message:$('#message').val(),
-        csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+      type: 'GET',
+      url: "/getMessages/{{ room }}/",
+      success: function(response){
+        $("#display").empty();
+        for (var key in response.messages) {
+          var temp = "<div class='container message'>" +
+                        "<span class='message-sender'>" + response.messages[key].user + "</span>" +
+                        "<p>" + response.messages[key].value + "</p>" +
+                        "<span class='time-left'>" + response.messages[key].date + "</span>" +
+                    "</div>";
+          $("#display").append(temp);
+        }
       },
-      success: function(data){
+      error: function(response){
+        alert('An error occurred');
       }
     });
-    document.getElementById('message').value = ''
+  }, 1000);
+
+  $(document).on('submit', '#post-form', function(e){
+    e.preventDefault();
+    $.ajax({
+      type: 'POST',
+      url: '/send',
+      data: {
+          username: $('#username').val(),
+          room_id: $('#room_id').val(),
+          message: $('#message').val(),
+          csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+      },
+      success: function(data){
+        $('#message').val('');
+      },
+      error: function(){
+        alert('An error occurred while sending the message');
+      }
+    });
   });
+});
 </script>
 
+</body>
 </html>
