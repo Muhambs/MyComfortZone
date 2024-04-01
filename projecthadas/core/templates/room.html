@@ -1,3 +1,5 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -131,6 +133,32 @@ input[type=submit]:hover {
     font-weight: bold;
     margin-bottom: 5px;
 }
+
+    .action-links {
+        display: flex;
+        justify-content: center;
+        gap: 20px; /* Adjust the space between links as needed */
+        margin-top: 20px;
+    }
+
+    .action-link {
+        text-decoration: none;
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: white;
+        border-radius: 5px;
+        transition: background-color 0.3s, transform 0.2s;
+    }
+
+    .action-link:hover, .action-link:focus {
+        background-color: #0056b3;
+        transform: translateY(-2px);
+        text-decoration: none; /* Ensure the text decoration is removed on hover/focus */
+    }
+
+    .action-link:active {
+        transform: translateY(1px);
+    }
 </style>
 </head>
 <body>
@@ -174,8 +202,18 @@ input[type=submit]:hover {
         <input type="submit" value="Send">
     </form>
 </div>
+<div class="action-links">
+    {% if user.is_authenticated %}
+        {% if not user.profile.is_doctor %}
+            <a href="{% url 'book_appointment' %}" class="action-link">Book an Appointment</a>
+        {% endif %}
 
-<a href="{% url 'home' %}">Back to Home</a>
+        {% if user.profile.is_doctor %}
+            <a href="{% url 'view_appointments' %}" class="action-link">View Appointments</a>
+        {% endif %}
+    {% endif %}
+    <a href="{% url 'home' %}" class="action-link">Back to Home</a>
+</div>
 
 <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
 <script>

@@ -40,3 +40,20 @@ class UserProfuile(models.Model):
 
 def __str__(self):
     return f"{self.user.username}'s profile"
+
+
+class Appointment(models.Model):
+    STATUS_CHOICES = (
+        ('pending', 'Pending'),
+        ('accepted', 'Accepted'),
+        ('rejected', 'Rejected'),
+    )
+
+    patient = models.ForeignKey(User, related_name='appointments_as_patient', on_delete=models.CASCADE)
+    doctor = models.ForeignKey(User, related_name='appointments_as_doctor', on_delete=models.CASCADE)
+    appointment_time = models.DateTimeField(default=now)
+    status = models.CharField(max_length=8, choices=STATUS_CHOICES, default='pending')
+    note = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.patient.username} appointment with {self.doctor.username} on {self.appointment_time}"

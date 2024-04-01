@@ -1,11 +1,11 @@
 from django.contrib.auth.forms import AuthenticationForm
 from django.db import transaction
 from django.http import JsonResponse, Http404
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import Group
 from django.views.decorators.csrf import csrf_exempt
-from django.contrib import messages
-from django.template.context_processors import request
+from .models import Appointment
+from .forms import AppointmentForm
 from django.views.generic import CreateView
 from django.urls import reverse_lazy
 from .decorates import *
@@ -140,6 +140,7 @@ def chat(request):
     return render(request,'homechat.html')
 
 def room(request, room):
+    # room = get_object_or_404(Room, name=room)
     username = request.GET.get('username')
     room_details = Room.objects.get(name=room)
     return render(request, 'room.html', {
@@ -174,3 +175,35 @@ def getMessages(request, room):
 
     messages = Message.objects.filter(room=room_details.id)
     return JsonResponse({"messages":list(messages.values())})
+
+
+@login_required
+def book_appointment(request):
+    if request.method == 'POST':
+        form = AppointmentForm(request.POST)
+        if form.is_valid():
+            appointment = form.save(commit=False)
+            appointment.patient = request.user
+            appointment.save()
+            return redirect('appointments:view_appointments')
+    else:
+        form = AppointmentForm()
+    return render(request, 'book_appointment.html', {'form': form})
+
+@login_required
+def view_appointments(request):
+    appointments = Appointment.objects.filter(doctor=request.user)
+    return render(request, 'view_appointments.html', {'appointments': appointments})
+
+
+@login_required
+def update_appointment_status(request, appointment_id, status):
+    appointment = get_object_or_404(Appointment, id=appointment_id, doctor=request.user)
+
+    if status == 'rejected':
+        appointment.delete()
+    elif status == 'accepted':
+        appointment.status = 'accepted'
+        appointment.save()
+
+    return redirect('view_appointments')

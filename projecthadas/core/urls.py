@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 from . import views
 
 urlpatterns = [
@@ -13,9 +13,12 @@ urlpatterns = [
     path('editprofile/', views.editprofile, name='editprofile'),
     path('contact/', views.contact, name='contact'),
     path('chat/', views.chat, name='chat'),
-    path('<str:room>/', views.room, name='room'),
     path('chat/checkview', views.checkview, name='checkview'),
     path('send', views.send, name='send'),
     path('getMessages/<str:room>/', views.getMessages, name='getMessages'),
+    path('book_appointment/', views.book_appointment, name='book_appointment'),
+    path('view_appointments/', views.view_appointments, name='view_appointments'),
+    path('update_appointment_status/<int:appointment_id>/<str:status>/', views.update_appointment_status, name='update_appointment_status'),
+    path('<str:room>/', views.room, name='room'),
 
 ]
