@@ -1,17 +1,70 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>View Appointments</title>
-<style>
-    body { font-family: Arial, sans-serif; padding: 20px; }
-    .appointment { border: 1px solid #ddd; margin-top: 10px; padding: 10px; }
-    .status { margin-top: 10px; }
-    .status button { padding: 5px 10px; margin-right: 5px; cursor: pointer; }
-    .accept { background-color: #4CAF50; color: white; border: none; }
-    .reject { background-color: #f44336; color: white; border: none; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Appointments</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+        .appointment {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,.1);
+        }
+        .appointment p {
+            margin: 10px 0;
+            line-height: 1.6;
+        }
+        .appointment .status {
+            display: flex;
+            justify-content: flex-end;
+        }
+        .appointment a {
+            display: inline-block;
+            padding: 10px 15px;
+            margin: 0 5px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+        .accept {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .reject {
+            background-color: #f44336;
+            color: white;
+        }
+        .accept:hover {
+            background-color: #45a049;
+        }
+        .reject:hover {
+            background-color: #d32f2f;
+        }
+        /* Additional styling for empty state */
+        .no-appointments {
+            text-align: center;
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            margin-top: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,.1);
+        }
+    </style>
 </head>
 <body>
 
@@ -20,17 +73,17 @@
 {% for appointment in appointments %}
 <div class="appointment">
     <p><strong>Patient:</strong> {{ appointment.patient.username }}</p>
-    <p><strong>Appointment Time:</strong> {{ appointment.appointment_time }}</p>
+    <p><strong>Appointment Time:</strong> {{ appointment.appointment_time|date:"D, d M Y H:i" }}</p>
     <p><strong>Note:</strong> {{ appointment.note }}</p>
-<div>
-    <p>Appointment with {{ appointment.patient.username }} on {{ appointment.appointment_time }}</p>
-    <p>Status: {{ appointment.status }}</p>
-    <a href="{% url 'update_appointment_status' appointment.id 'accepted' %}">Accept</a>
-    <a href="{% url 'update_appointment_status' appointment.id 'rejected' %}">Reject</a>
-</div>
+    <div class="status">
+        <a href="{% url 'update_appointment_status' appointment.id 'accepted' %}" class="accept">Accept</a>
+        <a href="{% url 'update_appointment_status' appointment.id 'rejected' %}" class="reject">Reject</a>
+    </div>
 </div>
 {% empty %}
-    <p>No pending appointments.</p>
+    <div class="no-appointments">
+        <p>No pending appointments.</p>
+    </div>
 {% endfor %}
 
 </body>

@@ -185,9 +185,11 @@ def book_appointment(request):
             appointment = form.save(commit=False)
             appointment.patient = request.user
             appointment.save()
-            return redirect('appointments:view_appointments')
+            messages.success(request, 'Appointment booked successfully!')
+            return redirect('book_appointment')
     else:
         form = AppointmentForm()
+
     return render(request, 'book_appointment.html', {'form': form})
 
 @login_required
