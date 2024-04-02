@@ -190,7 +190,6 @@ def book_appointment(request):
             return redirect('book_appointment')
     else:
         form = AppointmentForm()
-
     return render(request, 'book_appointment.html', {'form': form})
 
 @login_required
