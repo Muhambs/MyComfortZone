@@ -1,6 +1,9 @@
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User, Group
 from django import forms
+from django.core.exceptions import ValidationError
+from django.utils import timezone
+
 from .models import UserProfuile, Appointment, doctor, Media
 
 
@@ -38,10 +41,18 @@ class AppointmentForm(forms.ModelForm):
     class Meta:
         model = Appointment
         fields = ['doctor', 'appointment_time', 'note']
+        # Assuming 'appointment_time' is the field for the datetime of the appointment
+
+    def clean_appointment_time(self):
+        appointment_time = forms.DateTimeField(widget=forms.DateTimeInput(attrs={'class': 'datetimepicker'}))
+        if appointment_time and appointment_time < timezone.now():
+            # Raises a validation error if the appointment_time is in the past
+            raise ValidationError("The appointment time cannot be in the past. Please choose a future date and time.")
+        return appointment_time
 
     def __init__(self, *args, **kwargs):
-        super(AppointmentForm, self).__init__(*args, **kwargs)
-        self.fields['doctor'].queryset = User.objects.filter(profile__is_doctor=True)
+        super().__init__(*args, **kwargs)
+        self.fields['appointment_time'].widget.attrs.update({'class': 'datetimepicker'})
 
 
 class MediaForm(forms.ModelForm):

@@ -121,5 +121,12 @@
       </nav>
     </div>
   </header>
+<div>
+  {% for user in users %}
+    {% if user.profile.is_doctor or request.user.is_authenticated and request.user.profile.is_doctor %}
+        <a href="{% url 'user_detail' user.id %}">{{ user.username }}</a>
+    {% endif %}
+{% endfor %}
+</div>
 </body>
 </html>

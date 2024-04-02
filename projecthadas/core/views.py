@@ -1,11 +1,13 @@
+from django.conf import settings
 from django.contrib.auth.forms import AuthenticationForm
+from django.core.mail import send_mail
 from django.db import transaction
-from django.http import JsonResponse, Http404
+from django.http import JsonResponse, Http404, HttpResponseForbidden
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import Group
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
-from django.views.generic import CreateView
+from django.views.generic import CreateView, DetailView
 from django.urls import reverse_lazy
 from .decorates import *
 from django.contrib.auth.decorators import login_required
@@ -261,3 +263,63 @@ def delete_media(request, media_id):
         return redirect('media')
     else:
         return redirect('media')
+
+class UserDetailView(DetailView):
+    model = User
+    template_name = 'user_detail.html'
+    context_object_name = 'profile_user'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['profile'] = self.get_object().profile
+        return context
+
+class UserDetailView(DetailView):
+    model = User
+    template_name = 'user_detail.html'
+    context_object_name = 'profile_user'
+
+    def dispatch(self, request, *args, **kwargs):
+        profile_user = self.get_object()
+        if profile_user.profile.is_patient and request.user.is_authenticated and not request.user.profile.is_doctor:
+            return HttpResponseForbidden("You are not allowed to view other patients' profiles.")
+        return super().dispatch(request, *args, **kwargs)
+
+def update_appointment_status(request, appointment_id, status):
+    appointment = get_object_or_404(Appointment, id=appointment_id, doctor=request.user)
+    patient_email = appointment.patient.email
+
+    if status == 'rejected' or status == 'accepted':
+        message = f"Your appointment has been {status}."
+        Notification.objects.create(receiver=appointment.patient, message=message)
+
+    if status == 'rejected':
+        appointment.delete()
+        send_mail(
+            'Appointment Update',
+            'Your appointment has been rejected.',
+            settings.EMAIL_HOST_USER,
+            [patient_email],
+            fail_silently=False,
+        )
+    elif status == 'accepted':
+        appointment.status = 'accepted'
+        appointment.save()
+        send_mail(
+            'Appointment Update',
+            'Your appointment has been accepted.',
+            settings.EMAIL_HOST_USER,
+            [patient_email],
+            fail_silently=False,
+        )
+
+    return redirect('view_appointments')
+
+
+class Notification(models.Model):
+    receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notifications')
+    message = models.TextField()
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    def __str__(self):
+        return f"Notification for {self.receiver.username}"

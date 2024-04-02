@@ -43,6 +43,14 @@
         .navbar-dark .navbar-nav .nav-link:focus {
             color: rgba(0, 0, 0, 0.9);
         }
+
+        .unread {
+            background-color: #f0f0f0; /* Light gray background for unread notifications */
+        }
+
+        .read {
+            color: #a0a0a0; /* Dimmed text for read notifications */
+    }
     </style>
 </head>
 <body>
@@ -75,21 +83,20 @@
     </div>
 </nav>
 
+
+
 <div class="container mt-5">
     <h2 class="text-center">Book an Appointment</h2>
-    <form method="post">
-        {% csrf_token %}
-        <div class="form-group">
-            {{ form.as_p }}
-        </div>
-        <button type="submit" class="btn btn-primary btn-block">Book Appointment</button>
-
-    </form>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Book Appointment</button>
+</form>
 </div>
 {% if messages %}
     {% for message in messages %}
         <div class="alert alert-success alert-dismissible fade show" role="alert">
-    Profile updated successfully!
+    Appointment booked successfully!
     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
         <span aria-hidden="true">&times;</span>
     </button>
@@ -97,8 +104,25 @@
     {% endfor %}
 {% endif %}
 
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+
+{% block extra_head %}
+    <!-- Include necessary CSS and JS files for Bootstrap DateTimePicker -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
+{% endblock %}
+
+{% block extra_js %}
+    <script>
+        $(function() {
+            $('.datetimepicker').datetimepicker({
+                format: 'YYYY-MM-DD HH:mm:ss',
+                minDate: new Date(),
+                useCurrent: false
+            });
+        });
+    </script>
+{% endblock %}
 </body>
 </html>

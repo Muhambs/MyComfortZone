@@ -7,8 +7,8 @@ urlpatterns = [
     path('home/', views.home, name='home'),
     path('registerpatient/', views.registerpatient.as_view(), name='register_patient'),
     path('registerdoctor/', views.registerdoctor.as_view(), name='register_doctor'),
-    path('loginpatient/', views.patientlogin, name='patient_login'),
-    path('logindoctor/', views.doctorlogin, name='doctor_login'),
+    path('patientlogin/', views.patientlogin, name='patientlogin'),
+    path('doctorlogin/', views.doctorlogin, name='doctorlogin'),
     path('logout/', views.logoutview, name='logout'),
     path('profile/', views.profile, name='profile'),
     path('editprofile/', views.editprofile, name='editprofile'),
@@ -26,5 +26,5 @@ urlpatterns = [
     path('update_appointment_status/<int:appointment_id>/<str:status>/', views.update_appointment_status, name='update_appointment_status'),
     path('<str:room>/', views.room, name='room'),
     path('view_appointments/', view_appointments, name='view_appointment'),
-
+    path('users/<int:pk>/', UserDetailView.as_view(), name='user_detail'),
 ]

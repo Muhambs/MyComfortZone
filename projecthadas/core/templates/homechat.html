@@ -108,7 +108,11 @@
 <div>
     <h2>Join Chat</h2>
 </div>
-
+<div>
+{% for doctor in doctors %}
+    <li><a href="{% url 'user_detail' doctor.user.id %}">{{ doctor.user.username }}</a></li>
+{% endfor %}
+</div>
 <div class="container">
     <form id="post-form" method="POST" action="checkview">
         {% csrf_token %}
