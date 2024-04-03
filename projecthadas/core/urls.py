@@ -1,3 +1,4 @@
+from django.conf.urls.static import static
 from django.urls import path, include
 from . import views
 from .views import *
@@ -5,8 +6,9 @@ from .views import *
 urlpatterns = [
     path('', views.home, name='home'),
     path('home/', views.home, name='home'),
-    path('registerpatient/', views.registerpatient.as_view(), name='register_patient'),
-    path('registerdoctor/', views.registerdoctor.as_view(), name='register_doctor'),
+    path('about/', views.about, name='about'),
+    path('registerpatient/', views.registerpatient.as_view(), name='registerpatient'),
+    path('registerdoctor/', views.registerdoctor.as_view(), name='registerdoctor'),
     path('patientlogin/', views.patientlogin, name='patientlogin'),
     path('doctorlogin/', views.doctorlogin, name='doctorlogin'),
     path('logout/', views.logoutview, name='logout'),
@@ -27,4 +29,5 @@ urlpatterns = [
     path('<str:room>/', views.room, name='room'),
     path('view_appointments/', view_appointments, name='view_appointment'),
     path('users/<int:pk>/', UserDetailView.as_view(), name='user_detail'),
-]
+
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

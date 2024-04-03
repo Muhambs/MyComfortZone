@@ -119,7 +119,7 @@
         <label for="room_name">Room Name:</label>
         <input type="text" name="room_name" id="room_name" placeholder="Enter room name" required>
         <label for="username">Username:</label>
-        <input type="text" name="username" id="username" placeholder="Enter your username" required>
+        <input type="text" name="username" id="username" placeholder="Enter your username" required {% if request.user.profile.is_doctor %}value="{{ request.user.username }}" readonly{% endif %}>
         <input type="submit" value="Enter Room">
     </form>
 </div>

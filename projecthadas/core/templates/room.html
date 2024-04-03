@@ -169,7 +169,6 @@ input[type=submit]:hover {
 <nav>
   <ul>
     <li><a href="{% url 'home' %}" class="active">Home</a></li>
-    <li><a href="#">About</a></li>
     {% if user.is_authenticated %}
       <li><a href="{% url 'profile' %}">Profile</a></li>
       <li><a href="{% url 'logout' %}">Logout</a></li>
@@ -261,6 +260,5 @@ $(document).ready(function(){
   });
 });
 </script>
-
 </body>
 </html>

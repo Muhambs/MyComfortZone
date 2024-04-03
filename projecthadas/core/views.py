@@ -15,12 +15,15 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from .forms import *
 from .models import *
+import logging
+logger = logging.getLogger(__name__)
+
 def home(request):
     return render(request, 'home.html')
 
 class registerpatient(CreateView):
-    template_name = 'PatientRegisterView.html'
-    form_class = RegisterViewpatient
+    template_name = 'registerpatient.html'
+    form_class = registerpatient
     success_url = reverse_lazy('patientlogin')
 
     def get_success_url(self):
@@ -33,12 +36,12 @@ class registerpatient(CreateView):
             group, _ = Group.objects.get_or_create(name='patient')
             user.groups.add(group)
             messages.success(self.request, "User has been created, please login with your username and password")
-        return super().form_valid(form)
+        return super().form_valid(form) and redirect('home')
 
 class registerdoctor(CreateView):
-    template_name = 'DoctorRegisterView.html'
-    form_class = RegisterViewdoctor
-    success_url = reverse_lazy('doctorlogin.html')
+    template_name = 'registerdoctor.html'
+    form_class = registerdoctor
+    success_url = reverse_lazy('doctorlogin')
 
     def form_valid(self, form):
         with transaction.atomic():
@@ -47,7 +50,7 @@ class registerdoctor(CreateView):
             group, _ = Group.objects.get_or_create(name='doctor')
             user.groups.add(group)
             messages.success(self.request, 'Doctor account has been created successfully')
-        return redirect('home')
+        return super().form_valid(form) and redirect('home')
 
 
 def logoutview(request):
@@ -176,6 +179,7 @@ def getMessages(request, room):
 
     messages = Message.objects.filter(room=room_details.id)
     return JsonResponse({"messages":list(messages.values())})
+
 
 
 @login_required
@@ -322,3 +326,6 @@ class Notification(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     def __str__(self):
         return f"Notification for {self.receiver.username}"
+
+def about(request):
+    return render(request, 'about.html')

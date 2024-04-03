@@ -8,12 +8,12 @@ from django.utils import timezone
 from .models import UserProfuile, Appointment, doctor, Media
 
 
-class RegisterViewpatient(UserCreationForm):
+class registerpatient(UserCreationForm):
     class Meta:
         model = User
         fields = ['username','email','password1','password2']
 
-class RegisterViewdoctor(UserCreationForm):
+class registerdoctor(UserCreationForm):
     class Meta:
         model = User
         fields = ['username','email','password1','password2']
