@@ -385,3 +385,4 @@ def delete_bug_report(request, bug_id):
     bug_report.delete()
     messages.success(request, "Bug report successfully deleted.")
     return redirect('view_bug_reports')
+
