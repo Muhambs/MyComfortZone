@@ -1,8 +1,6 @@
-<!DOCTYPE html>
 {% extends 'base.html' %}
-{% block title %}Profile{% endblock %}
+{% block title %}Doctors Profiles{% endblock %}
 {% block content %}
-
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -52,38 +50,23 @@
         }
     </style>
 </head>
-<body>
+
 <div class="container mt-5">
-
-    <div class="profile-info">
-        <h2>{{ user.username }} Profile</h2>
-        <div class="profile-usertitle-name">
-        {% if profile %}
-<div class="profile-info">
-    <p><strong>Username:</strong> {{ profile.user.username }}</p>
-    <p><strong>Email:</strong> {{ profile.user.email }}</p>
-    <p><strong>Bio:</strong> {{ profile.bio }}</p>
-    <p><strong>Location:</strong> {{ profile.location }}</p>
-    <p><strong>Date of Birth:</strong> {{ profile.dob }}</p>
-    <p><strong>Education:</strong> {{ profile.education }}</p>
-    {% if user.profile.is_doctor %}
-    <p><strong>Room chat:</strong> {{ profile.roomchat }}</p>
-    {% endif %}
-    {% if profile.profile_image %}
+    {% for doctor in doctors %}
+    <div class="profile-info mb-4">
+        <h2>{{ doctor.user.username }}'s Details and Roomchat</h2>
+        <p><strong>Username:</strong> {{ doctor.user.username }}</p>
+        <p><strong>Email:</strong> {{ doctor.user.email }}</p>
+        <p><strong>Bio:</strong> {{ doctor.bio|default:"Not provided" }}</p>
+        <p><strong>Location:</strong> {{ doctor.location|default:"Not provided" }}</p>
+        <p><strong>Education:</strong> {{ doctor.education|default:"Not provided" }}</p>
+        <p><strong>Room chat:</strong> {{ doctor.roomchat|default:"Not provided" }}</p>
+        {% if doctor.profile_image %}
         <p><img src="{{ profile.profile_image.url }}" alt="Profile Image" width="300" height="300"></p>
-    {% endif %}
-</div>
-{% else %}
-<p>No profile information available.</p>
-{% endif %}
-
-<a href="{% url 'editprofile' %}">Edit Profile</a>
+        {% endif %}
     </div>
+    {% empty %}
+    <p>No doctors found.</p>
+    {% endfor %}
 </div>
-</div>
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-</body>
-</html>
 {% endblock %}

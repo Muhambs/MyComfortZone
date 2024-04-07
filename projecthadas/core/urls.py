@@ -26,8 +26,16 @@ urlpatterns = [
     path('view_appointments/', views.view_appointments, name='view_appointments'),
     path('delete_appointment/<int:appointment_id>/', views.delete_appointment, name='delete_appointment'),
     path('update_appointment_status/<int:appointment_id>/<str:status>/', views.update_appointment_status, name='update_appointment_status'),
-    path('<str:room>/', views.room, name='room'),
     path('view_appointments/', view_appointments, name='view_appointment'),
     path('users/<int:pk>/', UserDetailView.as_view(), name='user_detail'),
+    path('doctors/', view_doctors, name='view_doctors'),
+    path('report-bug/', report_bug, name='report_bug'),
+    path('view_bug_reports/', view_bug_reports, name='view_bug_reports'),
+    path('delete_bug_report/<int:bug_id>/', delete_bug_report, name='delete_bug_report'),
+    path('ratings-summary/', ratings_summary, name='ratings_summary'),
+    path('submit-rating/', submit_rating, name='submit_rating'),
+    path('<str:room>/', views.room, name='room'),
 
-]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

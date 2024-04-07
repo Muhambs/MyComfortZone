@@ -4,7 +4,6 @@ from django.core.mail import send_mail
 from django.db import transaction
 from django.http import JsonResponse, Http404, HttpResponseForbidden
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.models import Group
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.views.generic import CreateView, DetailView
@@ -15,6 +14,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from .forms import *
 from .models import *
+from django.db.models import Avg, Count
 import logging
 logger = logging.getLogger(__name__)
 
@@ -59,7 +59,7 @@ def logoutview(request):
 @csrf_exempt
 @login_required
 def profile(request):
-    profile, created = UserProfuile.objects.get_or_create(user=request.user)
+    profile, created = UserProfile.objects.get_or_create(user=request.user)
     if request.method == 'POST':
         form = ProfileForm(request.POST, request.FILES, instance=profile)
         if form.is_valid():
@@ -71,7 +71,7 @@ def profile(request):
     return render(request, 'profile.html', {'form': form, 'profile': profile})
 @login_required
 def editprofile(request):
-    profile = request.user.userprofuile
+    profile = request.user.userprofile
     if request.method == 'POST':
         form = ProfileForm(request.POST, request.FILES, instance=profile)
         if form.is_valid():
@@ -114,14 +114,12 @@ def doctorlogin(request):
             password = request.POST.get('password')
             user = authenticate(request, username=username, password=password)
             if user is not None:
-                # Ensure the user has a profile
                 try:
                     profile = Profile.objects.get(user=user)
                 except Profile.DoesNotExist:
                     messages.error(request, "This account does not have a profile.")
                     return render(request, 'doctorlogin.html', {'form': form})
 
-                # Check if the user is a doctor
                 if profile.is_doctor:
                     login(request, user)
                     return redirect('profile')
@@ -144,9 +142,8 @@ def chat(request):
     return render(request,'homechat.html')
 
 def room(request, room):
-    # room = get_object_or_404(Room, name=room)
+    room_details = get_object_or_404(Room, name=room)
     username = request.GET.get('username')
-    room_details = Room.objects.get(name=room)
     return render(request, 'room.html', {
         'username': username,
         'room': room,
@@ -180,6 +177,8 @@ def getMessages(request, room):
     messages = Message.objects.filter(room=room_details.id)
     return JsonResponse({"messages":list(messages.values())})
 
+import logging
+logger = logging.getLogger(__name__)
 
 
 @login_required
@@ -258,10 +257,10 @@ def upload_media(request):
     return render(request, 'media.html', {'form': form})
 
 @login_required
-@require_POST  # Ensures this view can only be called with POST requests
+@require_POST
 def delete_media(request, media_id):
     media = get_object_or_404(Media, id=media_id)
-    if request.user.profile.is_doctor:  # Check if the user is a doctor
+    if request.user.profile.is_doctor:
         media.delete()
         return redirect('media')
     else:
@@ -329,3 +328,60 @@ class Notification(models.Model):
 
 def about(request):
     return render(request, 'about.html')
+
+
+def submit_rating(request):
+    if request.method == 'POST':
+        form = WebsiteRatingForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Thank you for your feedback!')
+            return redirect('home')  # Redirect to a confirmation page or back to home
+    else:
+        form = WebsiteRatingForm()
+    return render(request, 'submit_rating.html', {'form': form})
+
+def ratings_summary(request):
+    avg_rating = WebsiteRating.objects.aggregate(Avg('rating'))['rating__avg']
+    total_ratings = WebsiteRating.objects.aggregate(Count('id'))['id__count']
+    rating_summaries = WebsiteRating.objects.all().order_by('-id')  # Assuming recent first
+    return render(request, 'ratings_summary.html', {
+        'avg_rating': avg_rating,
+        'total_ratings': total_ratings,
+        'rating_summaries': rating_summaries
+    })
+
+@login_required
+def view_doctors(request):
+    if not request.user.profile.is_doctor:
+        doctors = Profile.objects.filter(is_doctor=True)
+        for doctor in doctors:  # Debugging: Print out the values to inspect them
+            print(f"Doctor: {doctor.user.username}, Education: {doctor.education}, Room chat: {doctor.roomchat}")
+        return render(request, 'view_doctors.html', {'doctors': doctors})
+    else:
+        return render(request, 'error.html', {'message': 'Only patients can view doctors profiles.'})
+
+
+
+@login_required
+def report_bug(request):
+    if request.method == 'POST':
+        form = BugReportForm(request.POST)
+        if form.is_valid():
+            bug_report = form.save(commit=False)
+            bug_report.user = request.user
+            bug_report.save()
+            return redirect('home')
+    else:
+        form = BugReportForm()
+    return render(request, 'report_bug.html', {'form': form})
+
+def view_bug_reports(request):
+    bug_reports = BugReport.objects.all().order_by('-created_at')
+    return render(request, 'view_bug_reports.html', {'bug_reports': bug_reports})
+
+def delete_bug_report(request, bug_id):
+    bug_report = get_object_or_404(BugReport, id=bug_id)
+    bug_report.delete()
+    messages.success(request, "Bug report successfully deleted.")
+    return redirect('view_bug_reports')

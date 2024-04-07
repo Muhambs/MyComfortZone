@@ -28,18 +28,28 @@ class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     is_patient = models.BooleanField(default=False)
     is_doctor = models.BooleanField(default=False)
-
-
-class UserProfuile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
     bio = models.TextField(blank=True, null=True)
     location = models.CharField(max_length=100, blank=True, null=True)
     dob = models.DateField(null=True, blank=True, default=now)
     profile_image = models.ImageField(upload_to='profiles/', blank=True, null=True)
     education = models.TextField(blank=True, null=True)
+    roomchat = models.CharField(max_length=255, blank=True, null=True)
+    def __str__(self):
+        return f"{self.user.username}'s profile"
 
-def __str__(self):
-    return f"{self.user.username}'s profile"
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    is_patient = models.BooleanField(default=False)
+    is_doctor = models.BooleanField(default=False)
+    bio = models.TextField(blank=True, null=True)
+    location = models.CharField(max_length=100, blank=True, null=True)
+    dob = models.DateField(null=True, blank=True, default=now)
+    profile_image = models.ImageField(upload_to='profiles/', blank=True, null=True)
+    education = models.TextField(blank=True, null=True)
+    roomchat = models.CharField(max_length=255, blank=True, null=True)
+    def __str__(self):
+        return f"{self.user.username}'s profile"
 
 
 class Appointment(models.Model):
@@ -73,3 +83,29 @@ def create_or_update_user_profile(sender, instance, created, **kwargs):
     instance.profile.save()
 class MyModel(models.Model):
     image = models.ImageField(upload_to='images/')
+
+
+class WebsiteRating(models.Model):
+    RATING_CHOICES = [
+        (1, 'Very Poor'),
+        (2, 'Poor'),
+        (3, 'Average'),
+        (4, 'Good'),
+        (5, 'Excellent'),
+    ]
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    rating = models.IntegerField(choices=RATING_CHOICES)
+    comment = models.TextField(null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.user.username if self.user else 'Anonymous'} - {self.get_rating_display()}"
+
+class BugReport(models.Model):
+        user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="bug_reports")
+        title = models.CharField(max_length=255)
+        description = models.TextField()
+        created_at = models.DateTimeField(auto_now_add=True)
+
+        def __str__(self):
+            return self.title
+

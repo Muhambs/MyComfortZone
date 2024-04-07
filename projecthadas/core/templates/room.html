@@ -210,10 +210,11 @@ input[type=submit]:hover {
 
         {% if user.profile.is_doctor %}
             <a href="{% url 'view_appointments' %}" class="action-link">View Appointments</a>
-        {% endif %}
+    {% endif %}
     {% endif %}
     <a href="{% url 'home' %}" class="action-link">Back to Home</a>
 </div>
+
 
 <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
 <script>

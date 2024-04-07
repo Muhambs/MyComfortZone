@@ -126,6 +126,36 @@
     .mt-40 {
       margin-top: 40px;
     }
+        .link-container {
+            display: flex;
+            justify-content: center; /* Center horizontally */
+            align-items: center; /* Center vertically */
+            height: 100vh; /* Full height of the viewport */
+        }
+
+    a {
+            text-decoration: none;
+            color: #007BFF;
+            font-weight: bold;
+            transition: color 0.3s ease-in-out;
+        }
+
+        a:hover {
+            color: #0056b3;
+            background-color: #e7f1ff;
+            padding: 2px 6px;
+            border-radius: 5px;
+        }
+
+        a:active {
+            color: #ffc107;
+            background-color: #fff3cd;
+        }
+
+        a:visited {
+            color: #6c757d;
+        }
+
 
   .resized {
     width: 400px;
@@ -155,6 +185,7 @@
                 <li><a href="{% url 'view_appointment' %}">View Appointments</a></li>
             {% else %}
                 <li><a href="{% url 'book_appointment' %}">Book Appointment</a></li>
+                <li><a href="{% url 'view_doctors' %}">Our Doctors</a></li>
             {% endif %}
 
           {% else %}
@@ -177,8 +208,7 @@
       </nav>
     </div>
   </header>
-  <br>
-  <br>
+
 <div class="container-wide">
   <div class="service">
     <img src="{% static 'core/imgs/chat.jpg' %}" alt="chat" class="resized">
@@ -198,5 +228,11 @@
     <p>Schedule your next therapy session with just a few clicks. Our intuitive appointment booking system lets you view available slots in real-time, making it easier to plan your sessions around your lifestyle.</p>
   </div>
 </div>
+
+<div class="link-container">
+  <a href="{% url 'submit_rating' %}" target="_blank" style="margin-right: 20px;">Rate Our Website</a>
+  <a href="{% url 'report_bug' %}" target="_blank">Report About Bug</a>
+</div>
+
 </body>
 </html>

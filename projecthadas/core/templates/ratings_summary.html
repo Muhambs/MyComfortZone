@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+{% extends 'base.html' %}
+{% block content %}
+
+<html>
+<head>
+    <title>Ratings Summary</title>
+    <style>
+        .rating-summary {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+        .rating-summary:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+    <h1>Ratings Summary</h1>
+    <p>Average Rating: {{ avg_rating|default:"No ratings yet" }}</p>
+    <p>Total Ratings: {{ total_ratings }}</p>
+
+    <h2>User Summaries</h2>
+    {% for rating in rating_summaries %}
+    <div class="rating-summary">
+        <p><strong>User:</strong> {{ rating.user.username|default:"Anonymous" }}</p>
+        <p><strong>Rating:</strong> {{ rating.get_rating_display }}</p>
+        <p><strong>Comment:</strong> {{ rating.comment|default:"No comment" }}</p>
+    </div>
+    {% empty %}
+    <p>No ratings have been submitted yet.</p>
+    {% endfor %}
+</body>
+</html>
+{% endblock %}

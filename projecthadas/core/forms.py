@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError
 from django.forms import DateTimeInput
 from django.utils import timezone
 
-from .models import UserProfuile, Appointment, doctor, Media
+from .models import *
 
 
 class registerpatient(UserCreationForm):
@@ -31,12 +31,19 @@ class loginpatient(UserCreationForm):
 
 class ProfileForm(forms.ModelForm):
     class Meta:
-        model = UserProfuile
-        fields = ['bio', 'location', 'dob', 'profile_image', 'education']
+        model = Profile
+        fields = ['bio', 'location', 'dob', 'profile_image', 'education','roomchat']
         widgets = {
             'dob': forms.DateInput(attrs={'type': 'date'}),
         }
 
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)
+        super(ProfileForm, self).__init__(*args, **kwargs)
+        if user and not user.profile.is_doctor:
+            self.fields.pop('roomchat', None)
+        else:
+            pass
 
 class AppointmentForm(forms.ModelForm):
     class Meta:
@@ -61,3 +68,14 @@ class MediaForm(forms.ModelForm):
     class Meta:
         model = Media
         fields = ['title', 'file', 'link']
+
+class WebsiteRatingForm(forms.ModelForm):
+    class Meta:
+        model = WebsiteRating
+        fields = ['rating', 'comment']
+
+
+class BugReportForm(forms.ModelForm):
+    class Meta:
+        model = BugReport
+        fields = ['title', 'description']
