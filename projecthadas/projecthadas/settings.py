@@ -9,7 +9,7 @@ SECRET_KEY = 'django-insecure-f6!%4ck*8f5%$e*ir8k&_pb!1%utr0k+ob_t!h)1867y(j)h1p
 
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['mycomfortzone.pythonanywhere.com', 'localhost', '127.0.0.1']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
