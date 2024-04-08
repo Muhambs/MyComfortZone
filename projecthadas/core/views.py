@@ -23,6 +23,7 @@ def home(request):
 
 class registerpatient(CreateView):
     template_name = 'registerpatient.html'
+
     form_class = registerpatient
 
     success_url = reverse_lazy('patientlogin')
