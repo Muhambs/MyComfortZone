@@ -61,8 +61,10 @@ def logoutview(request):
 def profile(request):
     profile, created = UserProfile.objects.get_or_create(user=request.user)
     if request.method == 'POST':
+
         form = ProfileForm(request.POST, request.FILES, instance=profile)
         if form.is_valid():
+
             form.save()
             messages.success(request, 'Profile updated successfully')
             return redirect('profile')
@@ -73,8 +75,10 @@ def profile(request):
 def editprofile(request):
     profile = request.user.userprofile
     if request.method == 'POST':
+
         form = ProfileForm(request.POST, request.FILES, instance=profile)
         if form.is_valid():
+
             form.save()
             messages.success(request, 'Profile updated successfully!')
             return redirect('profile')
@@ -96,6 +100,7 @@ def patientlogin(request):
                     messages.error(request, "This account does not have a profile.")
                     return render(request, 'patientlogin.html', {'form': form})
                 if profile.is_patient:
+
                     login(request, user)
                     return redirect('profile')
                 else:
@@ -290,12 +295,13 @@ class UserDetailView(DetailView):
 def update_appointment_status(request, appointment_id, status):
     appointment = get_object_or_404(Appointment, id=appointment_id, doctor=request.user)
     patient_email = appointment.patient.email
-
     if status == 'rejected' or status == 'accepted':
+
         message = f"Your appointment has been {status}."
         Notification.objects.create(receiver=appointment.patient, message=message)
 
     if status == 'rejected':
+
         appointment.delete()
         send_mail(
             'Appointment Update',
@@ -321,9 +327,12 @@ def update_appointment_status(request, appointment_id, status):
 class Notification(models.Model):
     receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notifications')
     message = models.TextField()
+
     is_read = models.BooleanField(default=False)
+
     created_at = models.DateTimeField(auto_now_add=True)
     def __str__(self):
+
         return f"Notification for {self.receiver.username}"
 
 def about(request):
