@@ -367,11 +367,13 @@ def view_doctors(request):
 def report_bug(request):
     if request.method == 'POST':
         form = BugReportForm(request.POST)
+
         if form.is_valid():
             bug_report = form.save(commit=False)
             bug_report.user = request.user
             bug_report.save()
             return redirect('home')
+
     else:
         form = BugReportForm()
     return render(request, 'report_bug.html', {'form': form})
