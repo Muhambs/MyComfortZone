@@ -131,12 +131,15 @@ def patientlogin(request):
 
 def doctorlogin(request):
     if request.method == "POST":
+
         form = AuthenticationForm(request, data=request.POST)
         if form.is_valid():
+
             username = request.POST.get('username')
             password = request.POST.get('password')
             user = authenticate(request, username=username, password=password)
             if user is not None:
+
                 try:
                     profile = Profile.objects.get(user=user)
                 except Profile.DoesNotExist:
