@@ -24,13 +24,16 @@ def home(request):
 class registerpatient(CreateView):
     template_name = 'registerpatient.html'
     form_class = registerpatient
+
     success_url = reverse_lazy('patientlogin')
 
     def get_success_url(self):
         messages.success(self.request, "User has been created, please login with your username and password")
         return super().get_success_url()
+
     def form_valid(self, form):
         with transaction.atomic():
+
             user = form.save()
             Profile.objects.create(user=user, is_patient=True)
             group, _ = Group.objects.get_or_create(name='patient')
