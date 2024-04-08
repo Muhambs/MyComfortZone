@@ -382,6 +382,7 @@ def view_bug_reports(request):
 
 
 def delete_bug_report(request, bug_id):
+
     bug_report = get_object_or_404(BugReport, id=bug_id)
 
     bug_report.delete()
