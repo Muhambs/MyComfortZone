@@ -173,7 +173,6 @@ def send(request):
 
 def getMessages(request, room):
     room_details = Room.objects.get(name=room)
-
     messages = Message.objects.filter(room=room_details.id)
     return JsonResponse({"messages":list(messages.values())})
 
@@ -336,7 +335,7 @@ def submit_rating(request):
         if form.is_valid():
             form.save()
             messages.success(request, 'Thank you for your feedback!')
-            return redirect('home')  # Redirect to a confirmation page or back to home
+            return redirect('home')
     else:
         form = WebsiteRatingForm()
     return render(request, 'submit_rating.html', {'form': form})
@@ -344,7 +343,7 @@ def submit_rating(request):
 def ratings_summary(request):
     avg_rating = WebsiteRating.objects.aggregate(Avg('rating'))['rating__avg']
     total_ratings = WebsiteRating.objects.aggregate(Count('id'))['id__count']
-    rating_summaries = WebsiteRating.objects.all().order_by('-id')  # Assuming recent first
+    rating_summaries = WebsiteRating.objects.all().order_by('-id')
     return render(request, 'ratings_summary.html', {
         'avg_rating': avg_rating,
         'total_ratings': total_ratings,
@@ -385,4 +384,3 @@ def delete_bug_report(request, bug_id):
     bug_report.delete()
     messages.success(request, "Bug report successfully deleted.")
     return redirect('view_bug_reports')
-

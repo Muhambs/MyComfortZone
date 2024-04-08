@@ -28,8 +28,8 @@
                             SignUp
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                            <a class="dropdown-item" href="{% url 'register_patient' %}">As Patient</a>
-                            <a class="dropdown-item" href="{% url 'register_doctor' %}">As Doctor</a>
+                            <a class="dropdown-item" href="{% url 'registerpatient' %}">As Patient</a>
+                            <a class="dropdown-item" href="{% url 'registerdoctor' %}">As Doctor</a>
                         </div>
                     </li>
                     <li class="nav-item dropdown">
@@ -37,8 +37,8 @@
                             Login
                         </a>
                         <div class="dropdown-menu" aria-labelledby="loginDropdownMenuLink">
-                            <a class="dropdown-item" href="{% url 'patient_login' %}">As Patient</a>
-                            <a class="dropdown-item" href="{% url 'doctor_login' %}">As Doctor</a>
+                            <a class="dropdown-item" href="{% url 'patientlogin' %}">As Patient</a>
+                            <a class="dropdown-item" href="{% url 'doctorlogin' %}">As Doctor</a>
                         </div>
                     </li>
                 {% endif %}

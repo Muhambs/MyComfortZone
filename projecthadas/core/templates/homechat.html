@@ -104,7 +104,20 @@
     </style>
 </head>
 <body>
+<div>
+    <h2>Doctors and Their Chatrooms</h2>
+<ul>
+    {% for doctor in doctors %}
+    <li>
+        Username: {{ doctor.user.username }}
+        - Chatroom: {{ doctor.roomchat.name|default:"No chatroom assigned" }}
+    </li>
+    {% empty %}
+    <li>No doctors found.</li>
+    {% endfor %}
+</ul>
 
+</div>
 <div>
     <h2>Join Chat</h2>
 </div>

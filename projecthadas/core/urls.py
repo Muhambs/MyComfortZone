@@ -36,6 +36,4 @@ urlpatterns = [
     path('submit-rating/', submit_rating, name='submit_rating'),
     path('<str:room>/', views.room, name='room'),
 
-
-
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

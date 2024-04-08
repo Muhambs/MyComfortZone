@@ -176,15 +176,15 @@ input[type=submit]:hover {
       <li class="dropdown">
         <a href="javascript:void(0)">SignUp</a>
         <div class="dropdown-content">
-          <a href="{% url 'register_patient' %}">As Patient</a>
-          <a href="{% url 'register_doctor' %}">As Doctor</a>
+          <a href="{% url 'registerpatient' %}">As Patient</a>
+          <a href="{% url 'registerdoctor' %}">As Doctor</a>
         </div>
       </li>
       <li class="dropdown">
         <a href="javascript:void(0)">Login</a>
         <div class="dropdown-content">
-          <a href="{% url 'patient_login' %}">As Patient</a>
-          <a href="{% url 'doctor_login' %}">As Doctor</a>
+          <a href="{% url 'patientlogin' %}">As Patient</a>
+          <a href="{% url 'doctorlogin' %}">As Doctor</a>
         </div>
       </li>
     {% endif %}
