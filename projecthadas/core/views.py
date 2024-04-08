@@ -388,7 +388,7 @@ def view_bug_reports(request):
     return render(request, 'view_bug_reports.html', {'bug_reports': bug_reports})
 
 
-def delete_bug_report(request, bug_id):
+def delete_bug_report(request, bug_id) :
 
     bug_report = get_object_or_404(BugReport, id=bug_id)
 
