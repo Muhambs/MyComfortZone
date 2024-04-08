@@ -296,6 +296,7 @@ class UserDetailView(DetailView):
 def update_appointment_status(request, appointment_id, status):
     appointment = get_object_or_404(Appointment, id=appointment_id, doctor=request.user)
     patient_email = appointment.patient.email
+
     if status == 'rejected' or status == 'accepted':
 
         message = f"Your appointment has been {status}."
@@ -305,11 +306,13 @@ def update_appointment_status(request, appointment_id, status):
 
         appointment.delete()
         send_mail(
+
             'Appointment Update',
             'Your appointment has been rejected.',
             settings.EMAIL_HOST_USER,
             [patient_email],
             fail_silently=False,
+
         )
     elif status == 'accepted':
         appointment.status = 'accepted'
