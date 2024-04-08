@@ -377,6 +377,7 @@ def report_bug(request):
     return render(request, 'report_bug.html', {'form': form})
 
 def view_bug_reports(request):
+
     bug_reports = BugReport.objects.all().order_by('-created_at')
     return render(request, 'view_bug_reports.html', {'bug_reports': bug_reports})
 
