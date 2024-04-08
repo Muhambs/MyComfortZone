@@ -37,6 +37,7 @@ class registerpatient(CreateView):
         with transaction.atomic():
 
             user = form.save()
+
             Profile.objects.create(user=user, is_patient=True)
             group, _ = Group.objects.get_or_create(name='patient')
             user.groups.add(group)
@@ -44,6 +45,7 @@ class registerpatient(CreateView):
         return super().form_valid(form) and redirect('home')
 
 class registerdoctor(CreateView):
+
     template_name = 'registerdoctor.html'
 
     form_class = registerdoctor
