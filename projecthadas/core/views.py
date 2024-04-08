@@ -74,6 +74,7 @@ def profile(request):
 @login_required
 def editprofile(request):
     profile = request.user.userprofile
+
     if request.method == 'POST':
 
         form = ProfileForm(request.POST, request.FILES, instance=profile)
