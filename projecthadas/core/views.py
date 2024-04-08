@@ -209,6 +209,7 @@ logger = logging.getLogger(__name__)
 
 @login_required
 def book_appointment(request):
+
     if request.method == 'POST':
         form = AppointmentForm(request.POST)
         if form.is_valid():
@@ -217,6 +218,7 @@ def book_appointment(request):
             appointment.save()
             messages.success(request, 'Appointment booked successfully!')
             return redirect('book_appointment')
+
     else:
         form = AppointmentForm()
     return render(request, 'book_appointment.html', {'form': form})
