@@ -343,7 +343,8 @@ def submit_rating(request):
         form = WebsiteRatingForm()
     return render(request, 'submit_rating.html', {'form': form})
 
-def ratings_summary(request):
+def ratings_summary (request):
+
     avg_rating = WebsiteRating.objects.aggregate(Avg('rating'))['rating__avg']
     total_ratings = WebsiteRating.objects.aggregate(Count('id'))['id__count']
     rating_summaries = WebsiteRating.objects.all().order_by('-id')  # Assuming recent first
