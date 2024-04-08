@@ -354,6 +354,7 @@ def ratings_summary(request):
 @login_required
 def view_doctors(request):
     if not request.user.profile.is_doctor:
+
         doctors = Profile.objects.filter(is_doctor=True)
         for doctor in doctors:  # Debugging: Print out the values to inspect them
             print(f"Doctor: {doctor.user.username}, Education: {doctor.education}, Room chat: {doctor.roomchat}")
