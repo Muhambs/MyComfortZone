@@ -66,7 +66,6 @@ class registerdoctor(CreateView):
 
 
 def logoutview(request):
-
     logout(request)
 
     return redirect('home')
