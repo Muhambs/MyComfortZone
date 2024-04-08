@@ -326,6 +326,7 @@ def update_appointment_status(request, appointment_id, status):
 
 class Notification(models.Model):
     receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notifications')
+
     message = models.TextField()
 
     is_read = models.BooleanField(default=False)
