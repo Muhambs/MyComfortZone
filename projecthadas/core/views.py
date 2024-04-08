@@ -380,9 +380,14 @@ def view_bug_reports(request):
     bug_reports = BugReport.objects.all().order_by('-created_at')
     return render(request, 'view_bug_reports.html', {'bug_reports': bug_reports})
 
+
+
 def delete_bug_report(request, bug_id):
     bug_report = get_object_or_404(BugReport, id=bug_id)
+
     bug_report.delete()
+
     messages.success(request, "Bug report successfully deleted.")
     return redirect('view_bug_reports')
+
 
