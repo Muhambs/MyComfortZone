@@ -29,6 +29,7 @@ class registerpatient(CreateView):
     success_url = reverse_lazy('patientlogin')
 
     def get_success_url(self):
+
         messages.success(self.request, "User has been created, please login with your username and password")
         return super().get_success_url()
 
@@ -44,21 +45,28 @@ class registerpatient(CreateView):
 
 class registerdoctor(CreateView):
     template_name = 'registerdoctor.html'
+
     form_class = registerdoctor
+
     success_url = reverse_lazy('doctorlogin')
 
+
     def form_valid(self, form):
+
         with transaction.atomic():
             user = form.save()
             Profile.objects.create(user=user, is_doctor=True)
             group, _ = Group.objects.get_or_create(name='doctor')
             user.groups.add(group)
             messages.success(self.request, 'Doctor account has been created successfully')
+
         return super().form_valid(form) and redirect('home')
 
 
 def logoutview(request):
+
     logout(request)
+
     return redirect('home')
 @csrf_exempt
 @login_required
@@ -89,16 +97,19 @@ def editprofile(request):
 def patientlogin(request):
     if request.method == "POST":
         form = AuthenticationForm(request, data=request.POST)
+
         if form.is_valid():
             username = request.POST['username']
             password = request.POST['password']
             user = authenticate(username=username, password=password)
+
             if user is not None:
                 try:
                     profile = Profile.objects.get(user=user)
                 except Profile.DoesNotExist:
                     messages.error(request, "This account does not have a profile.")
                     return render(request, 'patientlogin.html', {'form': form})
+
                 if profile.is_patient:
                     login(request, user)
                     return redirect('profile')
