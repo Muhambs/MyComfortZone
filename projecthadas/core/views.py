@@ -330,10 +330,12 @@ def about(request):
     return render(request, 'about.html')
 
 
-def  submit_rating(request):
-    if  request.method == 'POST':
-        form  = WebsiteRatingForm(request.POST)
-        if  form.is_valid():
+def submit_rating(request):
+
+    if request.method == 'POST':
+
+        form= WebsiteRatingForm(request.POST)
+        if form.is_valid():
             form.save()
             messages.success(request, 'Thank you for your feedback!')
             return redirect('home')  # Redirect to a confirmation page or back to home
