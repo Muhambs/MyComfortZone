@@ -23,15 +23,21 @@ def home(request):
 
 class registerpatient(CreateView):
     template_name = 'registerpatient.html'
+
     form_class = registerpatient
+
     success_url = reverse_lazy('patientlogin')
 
     def get_success_url(self):
+
         messages.success(self.request, "User has been created, please login with your username and password")
         return super().get_success_url()
+
     def form_valid(self, form):
         with transaction.atomic():
+
             user = form.save()
+
             Profile.objects.create(user=user, is_patient=True)
             group, _ = Group.objects.get_or_create(name='patient')
             user.groups.add(group)
@@ -39,30 +45,39 @@ class registerpatient(CreateView):
         return super().form_valid(form) and redirect('home')
 
 class registerdoctor(CreateView):
+
     template_name = 'registerdoctor.html'
+
     form_class = registerdoctor
+
     success_url = reverse_lazy('doctorlogin')
 
+
     def form_valid(self, form):
+
         with transaction.atomic():
             user = form.save()
             Profile.objects.create(user=user, is_doctor=True)
             group, _ = Group.objects.get_or_create(name='doctor')
             user.groups.add(group)
             messages.success(self.request, 'Doctor account has been created successfully')
+
         return super().form_valid(form) and redirect('home')
 
 
 def logoutview(request):
     logout(request)
+
     return redirect('home')
 @csrf_exempt
 @login_required
 def profile(request):
     profile, created = UserProfile.objects.get_or_create(user=request.user)
     if request.method == 'POST':
+
         form = ProfileForm(request.POST, request.FILES, instance=profile)
         if form.is_valid():
+
             form.save()
             messages.success(request, 'Profile updated successfully')
             return redirect('profile')
@@ -72,9 +87,12 @@ def profile(request):
 @login_required
 def editprofile(request):
     profile = request.user.userprofile
+
     if request.method == 'POST':
+
         form = ProfileForm(request.POST, request.FILES, instance=profile)
         if form.is_valid():
+
             form.save()
             messages.success(request, 'Profile updated successfully!')
             return redirect('profile')
@@ -84,18 +102,23 @@ def editprofile(request):
 
 def patientlogin(request):
     if request.method == "POST":
+
         form = AuthenticationForm(request, data=request.POST)
+
         if form.is_valid():
             username = request.POST['username']
             password = request.POST['password']
             user = authenticate(username=username, password=password)
+
             if user is not None:
                 try:
                     profile = Profile.objects.get(user=user)
                 except Profile.DoesNotExist:
                     messages.error(request, "This account does not have a profile.")
                     return render(request, 'patientlogin.html', {'form': form})
+
                 if profile.is_patient:
+
                     login(request, user)
                     return redirect('profile')
                 else:
@@ -108,12 +131,15 @@ def patientlogin(request):
 
 def doctorlogin(request):
     if request.method == "POST":
+
         form = AuthenticationForm(request, data=request.POST)
         if form.is_valid():
+
             username = request.POST.get('username')
             password = request.POST.get('password')
             user = authenticate(request, username=username, password=password)
             if user is not None:
+
                 try:
                     profile = Profile.objects.get(user=user)
                 except Profile.DoesNotExist:
@@ -173,6 +199,7 @@ def send(request):
 
 def getMessages(request, room):
     room_details = Room.objects.get(name=room)
+
     messages = Message.objects.filter(room=room_details.id)
     return JsonResponse({"messages":list(messages.values())})
 
@@ -182,6 +209,7 @@ logger = logging.getLogger(__name__)
 
 @login_required
 def book_appointment(request):
+
     if request.method == 'POST':
         form = AppointmentForm(request.POST)
         if form.is_valid():
@@ -190,6 +218,7 @@ def book_appointment(request):
             appointment.save()
             messages.success(request, 'Appointment booked successfully!')
             return redirect('book_appointment')
+
     else:
         form = AppointmentForm()
     return render(request, 'book_appointment.html', {'form': form})
@@ -291,17 +320,21 @@ def update_appointment_status(request, appointment_id, status):
     patient_email = appointment.patient.email
 
     if status == 'rejected' or status == 'accepted':
+
         message = f"Your appointment has been {status}."
         Notification.objects.create(receiver=appointment.patient, message=message)
 
     if status == 'rejected':
+
         appointment.delete()
         send_mail(
+
             'Appointment Update',
             'Your appointment has been rejected.',
             settings.EMAIL_HOST_USER,
             [patient_email],
             fail_silently=False,
+
         )
     elif status == 'accepted':
         appointment.status = 'accepted'
@@ -319,10 +352,14 @@ def update_appointment_status(request, appointment_id, status):
 
 class Notification(models.Model):
     receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notifications')
+
     message = models.TextField()
+
     is_read = models.BooleanField(default=False)
+
     created_at = models.DateTimeField(auto_now_add=True)
     def __str__(self):
+
         return f"Notification for {self.receiver.username}"
 
 def about(request):
@@ -330,20 +367,23 @@ def about(request):
 
 
 def submit_rating(request):
+
     if request.method == 'POST':
-        form = WebsiteRatingForm(request.POST)
+
+        form= WebsiteRatingForm(request.POST)
         if form.is_valid():
             form.save()
             messages.success(request, 'Thank you for your feedback!')
-            return redirect('home')
+            return redirect('home')  # Redirect to a confirmation page or back to home
     else:
         form = WebsiteRatingForm()
     return render(request, 'submit_rating.html', {'form': form})
 
-def ratings_summary(request):
+def ratings_summary (request):
+
     avg_rating = WebsiteRating.objects.aggregate(Avg('rating'))['rating__avg']
     total_ratings = WebsiteRating.objects.aggregate(Count('id'))['id__count']
-    rating_summaries = WebsiteRating.objects.all().order_by('-id')
+    rating_summaries = WebsiteRating.objects.all().order_by('-id')  # Assuming recent first
     return render(request, 'ratings_summary.html', {
         'avg_rating': avg_rating,
         'total_ratings': total_ratings,
@@ -353,6 +393,7 @@ def ratings_summary(request):
 @login_required
 def view_doctors(request):
     if not request.user.profile.is_doctor:
+
         doctors = Profile.objects.filter(is_doctor=True)
         for doctor in doctors:
             print(f"Doctor: {doctor.user.username}, Education: {doctor.education}, Room chat: {doctor.roomchat}")
@@ -366,21 +407,31 @@ def view_doctors(request):
 def report_bug(request):
     if request.method == 'POST':
         form = BugReportForm(request.POST)
+
         if form.is_valid():
             bug_report = form.save(commit=False)
             bug_report.user = request.user
             bug_report.save()
             return redirect('home')
+
     else:
         form = BugReportForm()
     return render(request, 'report_bug.html', {'form': form})
 
 def view_bug_reports(request):
+
     bug_reports = BugReport.objects.all().order_by('-created_at')
     return render(request, 'view_bug_reports.html', {'bug_reports': bug_reports})
 
-def delete_bug_report(request, bug_id):
+
+def delete_bug_report(request, bug_id) :
+
     bug_report = get_object_or_404(BugReport, id=bug_id)
+
     bug_report.delete()
+
     messages.success(request, "Bug report successfully deleted.")
     return redirect('view_bug_reports')
+
+
+
