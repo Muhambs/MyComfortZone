@@ -354,7 +354,7 @@ def ratings_summary(request):
 def view_doctors(request):
     if not request.user.profile.is_doctor:
         doctors = Profile.objects.filter(is_doctor=True)
-        for doctor in doctors:  # Debugging: Print out the values to inspect them
+        for doctor in doctors:
             print(f"Doctor: {doctor.user.username}, Education: {doctor.education}, Room chat: {doctor.roomchat}")
         return render(request, 'view_doctors.html', {'doctors': doctors})
     else:
